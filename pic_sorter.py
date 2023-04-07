@@ -1,9 +1,9 @@
-from asyncio import constants
-from PIL import Image 
+from PIL import Image
 import tkinter as tk 
 from tkinter import filedialog as fd
 import os 
 import pathlib
+
 
 
 win=tk.Tk() 
@@ -12,14 +12,30 @@ win.geometry('300x200+100+200')
 win.resizable(False, False)
 photo = tk.PhotoImage(file='logo.png')
 win.iconphoto(False, photo)
-win.config(bg='#a2a2d0')
+win.config(bg='#e5e5e5')
 
 
+white_theme = True
+button_color = '#cddcc7'
 count = 0 
 where = ''
 
 
-def callback(): #choose the folder with images
+
+def theme_switch():
+    global white_theme
+    global button_color
+    if white_theme == True:
+        win.config(bg='#202020')
+        button_color = '#292929'
+        white_theme = False
+    else:
+        win.config(bg='#e5e5e5')
+        button_color = '#cddcc7'
+        white_theme = True
+
+
+def choose_input_folder(): 
     askdir = fd.askdirectory() 
     global count
     for paths, subdirs, files in os.walk(askdir):  
@@ -36,7 +52,7 @@ def callback(): #choose the folder with images
         return()
 
 
-def save(): #choose save folder
+def choose_output_folder(): 
     global where
     where = fd.askdirectory()
 
@@ -48,12 +64,12 @@ def main(link):
         with Image.open(filename) as img: 
             img.load()
         resolution = img.size         
-        ratio = format(resolution[0], resolution[1])         
-        return(moving(ratio, link))
+        ratio = image_format_definition(resolution[0], resolution[1])         
+        return(moving_files(ratio, link))
     else: return(f'Please make sure there are no dots in the {new} file path and that the file extension is jpg or png!')
 
 
-def format(horisontal, vertical): #image format definition
+def image_format_definition(horisontal, vertical):
     if vertical > horisontal:
         return('vertical')
     elif vertical < horisontal:
@@ -62,7 +78,7 @@ def format(horisontal, vertical): #image format definition
         return('square')
 
     
-def moving(description, path): #moving files
+def moving_files(description, path):
 
     if description=='vertical': 
         #shutil.move(path, 'D:\new') 
@@ -83,17 +99,21 @@ def moving(description, path): #moving files
         return'squarelol'
     else:
         return'I can''t characterize the file!'
-
-
+    
 
 
 btn = tk.Button(text='Select the input folder', 
-      command=callback)
+      command=choose_input_folder)
 btn.pack() 
 
 btn1 = tk.Button(text='Select the output folder', 
-      command=save)
+      command=choose_output_folder)
 btn1.pack() 
+
+btn0 = tk.Button(text='change theme', 
+      bg=button_color,
+      command=theme_switch)
+btn0.pack() 
 
 
 print(where)
